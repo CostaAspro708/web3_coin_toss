@@ -18,6 +18,7 @@ contract Bet{
         uint index;
     }
 
+    mapping(address => BetStruct) BetMap;
     BetStruct[] bets;
     
     constructor(){
