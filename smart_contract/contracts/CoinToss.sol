@@ -1,27 +1,47 @@
-//SPDX-License-Identifier: Unlicense
+//SPDX-License-Identifier: UNLICENSED
+
 pragma solidity ^0.8.0;
 
-contract CoinToss {
-    uint256 gameCount;
+/** 
+ * @title Bet
+ * @dev Implements betting process
+ */
 
-    event Bet(address from, uint256 amount, uint256 timestamp);
+contract Bet{
+    uint256 betCount; 
+
     struct BetStruct{
-        address creator;
-        uint amount;
+        address creator_address;
+        uint256 ammount;
         uint256 timestamp;
+        uint index;
     }
 
     BetStruct[] bets;
     
-
-
-
-    function greet() public view returns (string memory) {
-        return greeting;
+    constructor(){
+        betCount = 0;
     }
 
-    function setGreeting(string memory _greeting) public {
-        console.log("Changing greeting from '%s' to '%s'", greeting, _greeting);
-        greeting = _greeting;
+
+    function createBet(uint256 ammount) public {
+        betCount++;
+        bets.push(BetStruct(msg.sender, ammount, block.timestamp, betCount));
     }
+
+    function joinBet(uint256 count) public {
+        
+    }
+
+    function getAllBets() public view returns(BetStruct[] memory) {
+        return bets;
+    }
+
+
+    function getCount() public view returns(uint256) {
+        return betCount;
+    }
+
+
 }
+
