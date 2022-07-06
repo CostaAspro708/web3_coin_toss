@@ -13,6 +13,7 @@ contract Bet{
     struct BetStruct{
         address creator_address;
         uint256 ammount;
+        bool active;
         uint256 timestamp;
         uint index;
     }
@@ -26,7 +27,7 @@ contract Bet{
 
     function createBet(uint256 ammount) public {
         betCount++;
-        bets.push(BetStruct(msg.sender, ammount, block.timestamp, betCount));
+        bets.push(BetStruct(msg.sender, ammount, true, block.timestamp, betCount));
     }
 
     function joinBet(uint256 count) public {
