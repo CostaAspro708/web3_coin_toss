@@ -13,12 +13,13 @@ contract Bet{
     struct BetStruct{
         address creator_address;
         uint256 ammount;
-        bool active;
+        //bool active;
         uint256 timestamp;
         uint index;
     }
 
-    mapping(address => BetStruct) BetMap;
+    mapping(address => BetStruct) betMap;
+    mapping(address => bool) active;
     BetStruct[] bets;
     
     constructor(){
@@ -27,13 +28,28 @@ contract Bet{
 
 
     function createBet(uint256 ammount) public {
+        
+        //User must not have an active bet.
+        require(active[msg.sender] == false);
         betCount++;
-        bets.push(BetStruct(msg.sender, ammount, true, block.timestamp, betCount));
+        bets.push(BetStruct(msg.sender, ammount, block.timestamp, betCount));
+        betMap[msg.sender] = BetStruct(msg.sender, ammount,  block.timestamp, betCount);
+        active[msg.sender] = true;
     }
 
-    function joinBet(uint256 count) public {
-        
+    function deleteBet() public {
+        betMap[msg.sender] = BetStruct(msg.sender, 0,  0, 0);
+        active[msg.sender] = false;
     }
+
+    function getMyBet() public view returns(BetStruct memory){
+        return betMap[msg.sender];
+    }
+
+    // //The index for the bet to join. Should be the betCount of bet.
+    // function joinBet(uint256 index) public {
+    //     active[][index] = false;
+    // }
 
     function getAllBets() public view returns(BetStruct[] memory) {
         return bets;
