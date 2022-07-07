@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: UNLICENSED
 
 pragma solidity ^0.8.0;
-
+import "hardhat/console.sol";
 /** 
  * @title Bet
  * @dev Implements betting process
@@ -9,36 +9,119 @@ pragma solidity ^0.8.0;
 
 contract Bet{
     uint256 betCount; 
-
+    uint256 minBet = 200;
     struct BetStruct{
         address creator_address;
         uint256 ammount;
-        //bool active;
         uint256 timestamp;
-        uint index;
+        bool active;
+        address winner;
     }
 
     mapping(address => BetStruct) betMap;
     mapping(address => bool) active;
+    mapping(address => bool) userExists;
+    mapping(address => uint256) balances;
+
+    address[] accounts;
     BetStruct[] bets;
+    BetStruct[] pastBets;
     
     constructor(){
         betCount = 0;
     }
 
+    function depostitEth() public payable{
+        require(msg.value > 0, "No eth to deposit");
 
-    function createBet(uint256 ammount) public {
-        
+        //Used to later check for active games.
+        if(userExists[msg.sender] == false){
+            accounts.push(msg.sender);
+            userExists[msg.sender] = true;
+        }
+        balances[msg.sender] += msg.value;
+    }
+
+    function withdrawEth(uint256 withdrawAmount) public payable{
+        require(userExists[msg.sender] == true, "user does not exist");
+        require(balances[msg.sender] >= withdrawAmount, "Insufficient Balance");
+        balances[msg.sender] -= withdrawAmount;
+        payable(msg.sender).transfer(withdrawAmount);
+
+    }
+    
+
+    function createBet(uint256 ammount) public { 
         //User must not have an active bet.
-        require(active[msg.sender] == false);
-        betCount++;
-        bets.push(BetStruct(msg.sender, ammount, block.timestamp, betCount));
-        betMap[msg.sender] = BetStruct(msg.sender, ammount,  block.timestamp, betCount);
+        require(ammount > 0 ,"minimum bet is 200 wei");
+        require(balances[msg.sender] >= ammount, "Not enough eth deposited");
+        require(active[msg.sender] == false,"already have active bet");
+        balances[msg.sender] -= ammount;
+        betMap[msg.sender] = BetStruct(msg.sender, ammount,  block.timestamp, true, msg.sender);
         active[msg.sender] = true;
+        bets.push(BetStruct(msg.sender, ammount, block.timestamp, true, msg.sender));
+        betCount++;
+    }
+
+    //A helper function used for getting a random winner.
+    function random() private view returns (uint) {
+        return uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, betCount)));   
+    }
+    
+    function returnActiveBets() public view returns(BetStruct[] memory) {
+        uint256 resultCount;
+        for(uint i; i<accounts.length; i++){
+            if(betMap[accounts[i]].active == true){
+                resultCount++;
+            }
+        }
+        uint j = 0;
+        BetStruct[] memory activeBets = new BetStruct[](resultCount);
+        for(uint i; i<accounts.length; i++){
+            if(betMap[accounts[i]].active == true){
+                activeBets[j] = betMap[accounts[i]];
+            }
+        }
+        return activeBets; 
+    }
+    
+    function selectWinner() private view returns (uint) {
+        uint winner = random()%99;
+        return winner;
+        
+    }
+    //The index for the bet to join. Should be the betCount of bet.
+    function joinBet(address creator_address) public {
+        address winner; 
+        //Can only join active bet and cant join own bet.
+        require(balances[msg.sender] >= betMap[creator_address].ammount, "not enough eth to cover bet");
+        require(active[creator_address] == true,"not an active bet");
+        require(msg.sender != creator_address, "cant join own bet");
+
+        balances[msg.sender] -= betMap[creator_address].ammount;
+
+        if(selectWinner() < 49){
+            console.log('winner: ', msg.sender);
+            winner = msg.sender;
+        }else{
+            console.log('winner: ', creator_address);
+            winner = creator_address;      
+        }
+
+        balances[winner] += (betMap[creator_address].ammount * 2);
+        betMap[creator_address].winner = winner;
+        betMap[creator_address].active = false;
+
+        pastBets.push(betMap[creator_address]);
+        
+        active[creator_address] = false;
+
     }
 
     function deleteBet() public {
-        betMap[msg.sender] = BetStruct(msg.sender, 0,  0, 0);
+        require(active[msg.sender] = true);
+        balances[msg.sender] += betMap[msg.sender].ammount;
+        betMap[msg.sender] = BetStruct(msg.sender, 0,  0, false, 0x0000000000000000000000000000000000000000);
         active[msg.sender] = false;
     }
 
@@ -46,10 +129,6 @@ contract Bet{
         return betMap[msg.sender];
     }
 
-    // //The index for the bet to join. Should be the betCount of bet.
-    // function joinBet(uint256 index) public {
-    //     active[][index] = false;
-    // }
 
     function getAllBets() public view returns(BetStruct[] memory) {
         return bets;
