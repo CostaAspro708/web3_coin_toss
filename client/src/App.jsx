@@ -1,13 +1,14 @@
 import { useState } from 'react'
-import { Navbar, Welcome, Footer, Services, Transactions } from './components'
+import { Navbar, Welcome, Footer, Services, Transactions, Header } from './components'
 const App = () => {
 
   return (
-    <div className="min-h-screen">
-      <h1 className="gradient-bg-welcome">
+    <div className="">
+      <div className="gradient-bg-welcome">
         <Navbar />
+        <Header/>
         <Welcome />
-      </h1>
+      </div>
       <Services />
       <Transactions />
       <Footer />
