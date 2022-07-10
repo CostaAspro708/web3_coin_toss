@@ -5,7 +5,8 @@ const App = () => {
   return (
     <div className="">
       <div className="gradient-bg-welcome">
-        <Navbar />
+        test
+        {/* <Navbar /> */}
         <Header/>
         <Welcome />
       </div>

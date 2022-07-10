@@ -15,7 +15,9 @@ const Input = ({ placeholder, name, type, value, handleChange }) => (
     />
   );
   
-  
+const DepositPopupForm = () => {
+    
+}
 
 const Header = () =>{
     const { handleChange,formDepositData, connectWallet,currentAccount, currentBalance,deposit, balance, withdraw,createBet, pastBets, myBet} = useContext(TransactionContext);
@@ -58,31 +60,30 @@ const Header = () =>{
             </div>
 
 
-            <div class="">
+        <div>
          <div class="modal fade" id="depositModal" aria-labelledby="depositModalLabel" aria-hidden="true">
-         <div class="modal-dialog">
-            <div class="modal-content">
-               <div class="modal-header">
-               <h5  id="depositModalLabel">Deposit</h5>
-               <button type="button" className='text-red' data-bs-dismiss="modal" aria-label="Close">x</button>
-               </div>
-               <div class="modal-body">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5  id="depositModalLabel">Deposit</h5>
+                        <button type="button" className='text-red' data-bs-dismiss="modal" aria-label="Close">x</button>
+                    </div>
+                        <div class="modal-body">
                
-                  <div class="mb-3">
-                     <label class="form-label">Amount in Eth</label>
-                     <Input placeholder="Amount (ETH)" name="amount" type="number" handleChange={handleChange}/>
-                     <div id="emailHelp" class="form-text">Enter an amount to add to your betting wallet.</div>
-                  </div>
-                  <button className="bg-[#00AF00] hover:bg-[#008200] text-white  py-2 px-4 rounded" onClick={handleSubmit}>Deposit</button>
-               
-               </div>
-               <div class="modal-footer">
-               <button type="button" className="bg-[#FBD000] hover:bg-[#FBBB00] text-white  py-2 px-4 rounded" data-bs-dismiss="modal">Close</button>
-               </div>
+                            <div class="mb-3">
+                                <label class="form-label">Amount in Eth</label>
+                                <Input placeholder="Amount (ETH)" name="amount" type="number" handleChange={handleChange}/>
+                                <div id="emailHelp" class="form-text">Enter an amount to add to your betting wallet.</div>
+                            </div>
+                        <button className="bg-[#00AF00] hover:bg-[#008200] text-white  py-2 px-4 rounded" onClick={handleSubmit}>Deposit</button>
+                        </div>
+                            <div class="modal-footer">
+                                <button type="button" className="bg-[#FBD000] hover:bg-[#FBBB00] text-white  py-2 px-4 rounded" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-         </div>
-         </div>
-         </div>
         </div>
        
     );
