@@ -15,20 +15,26 @@ const Input = ({ placeholder, name, type, value, handleChange }) => (
     />
   );
   
-const DepositPopupForm = () => {
-    
-}
+
 
 const Header = () =>{
     const { handleChange,formDepositData, connectWallet,currentAccount, currentBalance,deposit, balance, withdraw,createBet, pastBets, myBet} = useContext(TransactionContext);
-    const handleSubmit = (e) => {
+    
+    
+    const handleSubmit = async (e) => {
         const depositAmount = formDepositData;
         e.preventDefault();
         
         if(!depositAmount || depositAmount <= 0) return;
     
-        deposit(depositAmount);
+        await deposit(depositAmount);
+        balance();
       };
+    
+    const handleWithdraw = (e) => {
+
+    };
+
     return(
         <div>
             <div className="text-white w-full mt-3">
@@ -48,7 +54,7 @@ const Header = () =>{
                     //else display deposit and withdraw buttons
                     <div className="flex justify-end mx-12 "> 
                         <div className=" py-2 rounded-tl rounded-bl bg-[#FBD000] font-bold">Balance: {currentBalance}  ETH</div>
-                        <button class="bg-[#FF0000] hover:bg-[#C80000] text-white font-bold py-2 px-4 rounded-tr rounded-br">
+                        <button class="bg-[#FF0000] hover:bg-[#C80000] text-white font-bold py-2 px-4 rounded-tr rounded-br" data-bs-toggle="modal" data-bs-target="#withdrawModal">
                             Withdraw
                         </button>
                         <button class="bg-[#00AF00] hover:bg-[#008200] text-white font-bold mx-4 py-2 px-4 rounded" data-bs-toggle="modal" data-bs-target="#depositModal">
@@ -59,8 +65,9 @@ const Header = () =>{
                 
             </div>
 
-
+        
         <div>
+        {/* Depoist pop up form */}
          <div class="modal fade" id="depositModal" aria-labelledby="depositModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -71,6 +78,8 @@ const Header = () =>{
                         <div class="modal-body">
                
                             <div class="mb-3">
+                                <label class="form-label">Current balance: {currentBalance}</label>
+                                <br></br>
                                 <label class="form-label">Amount in Eth</label>
                                 <Input placeholder="Amount (ETH)" name="amount" type="number" handleChange={handleChange}/>
                                 <div id="emailHelp" class="form-text">Enter an amount to add to your betting wallet.</div>
@@ -84,7 +93,34 @@ const Header = () =>{
                     </div>
                 </div>
             </div>
-        </div>
+
+        {/* Withdraw pop up form */}
+         <div class="modal fade" id="withdrawModal" aria-labelledby="withdrawModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5  id="withdrawModalLabel">Withdraw</h5>
+                        <button type="button" className='text-red' data-bs-dismiss="modal" aria-label="Close">x</button>
+                    </div>
+                        <div class="modal-body">
+                
+                            <div class="mb-3">
+                                <label class="form-label">Current balance: {currentBalance}</label>
+                                <br></br>
+                                <label class="form-label">Amount in Eth</label>
+                                <Input placeholder="Amount (ETH)" name="amount" type="number" handleChange={handleChange}/>
+                                <div id="emailHelp" class="form-text">Enter an amount to add to your betting wallet.</div>
+                            </div>
+                        <button className="bg-[#00AF00] hover:bg-[#008200] text-white  py-2 px-4 rounded" onClick={handleSubmit}>withdraw</button>
+                        </div>
+                            <div class="modal-footer">
+                                <button type="button" className="bg-[#FBD000] hover:bg-[#FBBB00] text-white  py-2 px-4 rounded" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
        
     );
 }
