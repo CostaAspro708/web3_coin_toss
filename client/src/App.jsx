@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navbar, Welcome, Footer, Services, Transactions, Header } from './components'
+import { Navbar, Welcome, Footer, Services, Transactions, Header, RecentBets } from './components'
 const App = () => {
 
   return (
@@ -9,6 +9,8 @@ const App = () => {
         {/* <Navbar /> */}
         <Header/>
         <Welcome />
+      
+      <RecentBets/>
       </div>
       <Services />
       <Transactions />

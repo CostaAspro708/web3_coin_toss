@@ -20,7 +20,15 @@ const getEthereumContract = () => {
 export const TransactionProvider = ({ children }) => {
     const [currentAccount, setCurrentAccounts] = useState("");
     const [currentBalance, setCurrentBalance] = useState("");
+    const [currentMyBet, setCurrentMyBet] = useState({
+        // creatorAddress: "test",
+        // ammount: "test",
+        // timestamp: "test",
+        // winner: "test",
+        // active: "test"   
+    });
     const [formDepositData, setFormDepositData] = useState();
+    const [activeBetsList, setActiveBetsList] = useState();
 
     
     const handleChange = (e, name) => {
@@ -77,14 +85,13 @@ export const TransactionProvider = ({ children }) => {
             if(!ethereum) return alert("please install metamask");
             const betContract = getEthereumContract();
             const withdrawAmount = parseInt(ammount)*(10**18);
-            console.log(ammount);
-            const withdraw = await betContract.withdrawEth(ethers.utils.parseEther(ammount));
+            const withdraw = await betContract.withdrawEth(ethers.utils.parseEther(ammount.amount));
             await withdraw.wait();
 
             await balance();
         } catch (error) {
             console.log("error");
-            throw new Error("No ethereum object");
+            throw new Error("No ethereum object withdraw");
         }
     }
     const getAllTransactions = async () => {
@@ -138,7 +145,30 @@ export const TransactionProvider = ({ children }) => {
             throw new Error("No ethereum object");
         }
     }
+    const deleteBet = async () => {
+        try {
+            if(!ethereum) return alert("please install metamask");
+            const transactionContract = getEthereumContract();
+            await transactionContract.deleteBet();
+            console.log("succ");
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    const ActiveBets = async () => {
+        if(!ethereum) return alert("please install metamask");
+        const transactionContract = getEthereumContract();
+        const activeBets = await transactionContract.ActiveBets();
+        const structuredActiveBets = activeBets.map(()=> ({
+            creatorAddress: myBet.creator_address,
+            ammount: parseInt(myBet.ammount._hex)/(10**18),
+            timestamp: new Date(myBet.timestamp.toNumber() * 1000).toLocaleString(),
+            winner: myBet.winner,
+            active: myBet.active
+        }));
+        setActiveBetsList(structuredActiveBets);
 
+    }
     const myBet = async () => {
         try {
             if(!ethereum) return alert("please install metamask");
@@ -151,6 +181,7 @@ export const TransactionProvider = ({ children }) => {
                 winner: myBet.winner,
                 active: myBet.active
             };
+            setCurrentMyBet(structuredMyBet);
             console.log(structuredMyBet);
         } catch (error) {
             console.log(error)
@@ -163,7 +194,7 @@ export const TransactionProvider = ({ children }) => {
         checkIfWalletIsConnected();
     }, []);
     return (
-        <TransactionContext.Provider value={{handleChange, formDepositData, connectWallet,currentAccount, deposit, balance, withdraw, pastBets, createBet, myBet, currentBalance}}>
+        <TransactionContext.Provider value={{handleChange, formDepositData, connectWallet,currentAccount, deposit, balance, withdraw, pastBets, createBet, currentMyBet, currentBalance, myBet, deleteBet, ActiveBets}}>
             {children}
         </TransactionContext.Provider>
     );

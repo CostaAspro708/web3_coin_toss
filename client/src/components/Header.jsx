@@ -18,10 +18,9 @@ const Input = ({ placeholder, name, type, value, handleChange }) => (
 
 
 const Header = () =>{
-    const { handleChange,formDepositData, connectWallet,currentAccount, currentBalance,deposit, balance, withdraw,createBet, pastBets, myBet} = useContext(TransactionContext);
-    
-    
-    const handleSubmit = async (e) => {
+    const { handleChange,formDepositData, connectWallet,currentAccount, currentBalance,deposit, balance, withdraw, currentMyBet, myBet} = useContext(TransactionContext);
+    //myBet();
+    const handleDepisit = async (e) => {
         const depositAmount = formDepositData;
         e.preventDefault();
         
@@ -31,11 +30,18 @@ const Header = () =>{
         balance();
       };
     
-    const handleWithdraw = (e) => {
-
+    const handleWithdraw = async (e) => {
+        const depositAmount = formDepositData;
+        e.preventDefault();
+        if(!depositAmount || depositAmount <= 0) return;
+        await withdraw(depositAmount);
+        balance();
     };
-
+    useEffect(() => {
+        balance();
+    }, []);
     return(
+
         <div>
             <div className="text-white w-full mt-3">
                 {currentAccount
@@ -84,7 +90,7 @@ const Header = () =>{
                                 <Input placeholder="Amount (ETH)" name="amount" type="number" handleChange={handleChange}/>
                                 <div id="emailHelp" class="form-text">Enter an amount to add to your betting wallet.</div>
                             </div>
-                        <button className="bg-[#00AF00] hover:bg-[#008200] text-white  py-2 px-4 rounded" onClick={handleSubmit}>Deposit</button>
+                        <button className="bg-[#00AF00] hover:bg-[#008200] text-white  py-2 px-4 rounded" onClick={handleDepisit}>Deposit</button>
                         </div>
                             <div class="modal-footer">
                                 <button type="button" className="bg-[#FBD000] hover:bg-[#FBBB00] text-white  py-2 px-4 rounded" data-bs-dismiss="modal">Close</button>
@@ -111,7 +117,7 @@ const Header = () =>{
                                 <Input placeholder="Amount (ETH)" name="amount" type="number" handleChange={handleChange}/>
                                 <div id="emailHelp" class="form-text">Enter an amount to add to your betting wallet.</div>
                             </div>
-                        <button className="bg-[#00AF00] hover:bg-[#008200] text-white  py-2 px-4 rounded" onClick={handleSubmit}>withdraw</button>
+                        <button className="bg-[#00AF00] hover:bg-[#008200] text-white  py-2 px-4 rounded" onClick={handleWithdraw}>withdraw</button>
                         </div>
                             <div class="modal-footer">
                                 <button type="button" className="bg-[#FBD000] hover:bg-[#FBBB00] text-white  py-2 px-4 rounded" data-bs-dismiss="modal">Close</button>

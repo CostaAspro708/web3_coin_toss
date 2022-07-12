@@ -7,10 +7,10 @@ const Services = () => {
     useEffect(() => {
         //connectWallet();
         //deposit();
-        balance();
+        //balance();
         //pastBets();
-        myBet();
-        //createBet("0.02");
+        //myBet();
+        //createBet("0.069");
         //withdraw("0.1");
 
 
